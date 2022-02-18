@@ -1,13 +1,17 @@
 package lectureNotes;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import jdk.internal.misc.JavaNetUriAccess;
+
+import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.Duration;
 
 public class WorkingWithHTTPinJava {}
 
@@ -168,46 +172,75 @@ class HelloWorld {
         }
 
     Основные моменты при работе с HttpUrlConnection:
+    1) Адрес сайта, к которому вы хотите обратиться, указывается в конструкторе класса java.net.URL.
+    2) Из экземпляра класса URL получаем экземпляр класса java.net.HttpUrlConnection.
+    3) У экземпляра класса HttpUrlConnection указывается HTTP метод, также у него можно получить статус
+       (код и сообщение), получить http header по индексу (getHeaderField(int n)) и т. д.
+    4) Для того, чтобы отправить POST запрос, у которого есть body, необходимо установить setDoOutput(true), после
+       чего можно передать тело запроса в OutputStream.
+    5) Для того, чтобы установить значение header, необходимо воспользоваться методом setRequestProperty(String,
+       String). Например, connection.setRequestProperty("Content-Type", "application/json");
 
-Адрес сайта, к которому вы хотите обратиться, указывается в конструкторе класса java.net.URL.
-Из экземпляра класса URL получаем экземпляр класса java.net.HttpUrlConnection.
-У экземпляра класса HttpUrlConnection указывается HTTP метод, также у него можно получить статус (код и сообщение), получить http header по индексу (getHeaderField(int n)) и т. д.
-Для того, чтобы отправить POST запрос, у которого есть body, необходимо установить setDoOutput(true), после чего можно передать тело запроса в OutputStream.
-Для того, чтобы установить значение header, необходимо воспользоваться методом setRequestProperty(String, String). Например, connection.setRequestProperty("Content-Type", "application/json");
-HttpClient#
-Начиная с Java 11, появилась возможность отправлять запросы при помощи HttpClient из того же пакета java.net.
+    HttpClient#
+    Начиная с Java 11, появилась возможность отправлять запросы при помощи HttpClient из того же пакета java.net.
+    Данный класс использует паттерн Builder для формирования запроса. Пример запроса, который возвращает ответ в
+    качестве строки:
+*/
+class Test {
+    public void get(String uri) throws Exception { // метод который, считывает весь HTML код страницы
+        HttpClient client = HttpClient.newHttpClient(); // HTTP-клиент. HttpClient можно использовать для отправки
+                                                        // запросов и получения ответов. newHttpClient() - Возвращает
+                                                        // новый HttpClient с настройками по умолчанию.
+        HttpRequest request = HttpRequest.newBuilder() // HTTP-запрос. Экземпляр HttpRequest создается с помощью
+                                                       // построителя HttpRequest. Построитель HttpRequest получается
+                                                       // из одного из методов newBuilder.
+                .uri(URI.create(uri)) // Задает URI запроса этого HttpRequest. create() - Создает URI, анализируя
+                                      // данную строку.
+                .build(); // Создает и возвращает HttpRequest.
 
-Данный класс использует паттерн Builder для формирования запроса. Пример запроса, который возвращает ответ в качестве строки:
+        HttpResponse<String> response = // HTTP-ответ.
+                client.send( // Отправляет данный запрос с помощью этого клиента, блокируя при необходимости получить
+                             // ответ. Возвращенный HttpResponse<T> содержит статус ответа, заголовки и тело
+                             // (обработанное данным обработчиком тела ответа).
+                        request, HttpResponse
+                                .BodyHandlers // Реализации BodyHandler, реализующие различные полезные обработчики,
+                                              // такие как обработка тела ответа как строки или потоковая передача тела
+                                              // ответа в файл.
+                                .ofString());
 
-public void get(String uri) throws Exception {
-    HttpClient client = HttpClient.newHttpClient();
-    HttpRequest request = HttpRequest.newBuilder()
-          .uri(URI.create(uri))
-          .build();
+        System.out.println(response.body()); // body() - Возвращает тело.
+    }
 
-    HttpResponse<String> response =
-          client.send(request, BodyHandlers.ofString());
+    public static void main(String[] args) throws Exception {
+        Test test = new Test();
+        test.get("http://openjdk.java.net/");
 
-    System.out.println(response.body());
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://openjdk.java.net/"))
+                .timeout(Duration.ofMinutes(1))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofFile(Paths.get("src\\main\\java\\lectureNotes\\file.json")))
+                .build();
+
+        System.out.println("ТЕСТ ТЕСТ ТЕСТ № 2");
+        System.out.println(request);
+    }
 }
-Builder может быть использован для того, чтобы установить:
 
-URI запроса
-HTTP метод ( GET, PUT, POST )
-Тело запроса (если есть)
-Time-out
-Request headers
-HttpRequest request = HttpRequest.newBuilder()
-      .uri(URI.create("http://openjdk.java.net/"))
-      .timeout(Duration.ofMinutes(1))
-      .header("Content-Type", "application/json")
-      .POST(BodyPublishers.ofFile(Paths.get("file.json")))
-      .build()
-ПОЛЕЗНО
-HttpClient позволяет также отправлять асинхронные запросы. Подробнее об этом вы можете узнать, ознакомившись с источниками.
+/*
+    Builder может быть использован для того, чтобы установить:
+        URI запроса
+        HTTP метод ( GET, PUT, POST )
+        Тело запроса (если есть)
+        Time-out
+        Request headers
 
-Дополнительные материалы#
-Introduction to the Java HTTP Client. - https://openjdk.java.net/groups/net/httpclient/intro.html
-Java HttpClient. Examples and Recipes. - https://openjdk.java.net/groups/net/httpclient/recipes.html
-Java.net.HttpURLConnection Class in Java - https://www.geeksforgeeks.org/java-net-httpurlconnection-class-java/?ref=lbp
+    ПОЛЕЗНО
+    HttpClient позволяет также отправлять асинхронные запросы. Подробнее об этом вы можете узнать, ознакомившись с
+    источниками.
+
+    Дополнительные материалы#
+    Introduction to the Java HTTP Client. - https://openjdk.java.net/groups/net/httpclient/intro.html
+    Java HttpClient. Examples and Recipes. - https://openjdk.java.net/groups/net/httpclient/recipes.html
+    Java.net.HttpURLConnection Class in Java - https://www.geeksforgeeks.org/java-net-httpurlconnection-class-java/?ref=lbp
  */
