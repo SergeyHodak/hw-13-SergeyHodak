@@ -1,7 +1,5 @@
 package lectureNotes;
 
-import jdk.internal.misc.JavaNetUriAccess;
-
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URI;
