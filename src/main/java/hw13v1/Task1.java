@@ -46,10 +46,12 @@ public class Task1 {
         return GSON.fromJson(response.body(), User.class);
     }
 
-    public static User sendGet(URI uri) throws IOException, InterruptedException {
+    public static User sendPut(URI uri, User user) throws IOException, InterruptedException {
+        String requestBody = GSON.toJson(user);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uri)
-                .GET()
+                .PUT(HttpRequest.BodyPublishers.ofString(requestBody))
+                .header("Content-type", "application/json")
                 .build();
         HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
         return GSON.fromJson(response.body(), User.class);
@@ -58,6 +60,10 @@ public class Task1 {
     public static void main(String[] args) throws IOException, InterruptedException {
         String url = "https://jsonplaceholder.typicode.com/users"; // к какому сайту будем подключаться
         User user1 = Task1.sendPost(URI.create(url), User.defaultUser()); // создать нового юзера на сайте
-        System.out.println(user1); // посмотреть на ответ сайта
+        System.out.println(user1 + "\n"); // посмотреть на ответ сайта
+
+        User user2 = Task1.sendPut(URI.create(url), User.defaultUser()); // создать нового юзера на сайте
+        System.out.println(user2 + "\n"); // посмотреть на ответ сайта
+
     }
 }
