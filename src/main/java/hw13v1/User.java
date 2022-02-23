@@ -1,6 +1,5 @@
 package hw13v1;
 
-import java.util.Map;
 import java.util.Objects;
 
 public class User { // Объект Пользователь
@@ -20,7 +19,6 @@ public class User { // Объект Пользователь
     private String nameCompany;
     private String catchPhrase;
     private String bs;
-
 
     // геттеры и сеттеры для поля класса
     public int getId() {return id;}
@@ -80,7 +78,7 @@ public class User { // Объект Пользователь
     // красивый предпросмотр, как на сайте
     @Override
     public String toString() {
-        return "User {\n" +
+        return "{\n" +
                 "    \"id\": " + getId() + ",\n" +
                 "    \"name\": \"" + getName() + "\",\n" +
                 "    \"username\": \"" + getUsername() + "\",\n" +
@@ -118,20 +116,102 @@ public class User { // Объект Пользователь
         result.setLat(48.47073044006648);
         result.setLng(35.028684139251716);
         result.setPhone("+380119911011");
-        result.setWebsite("https://www.facebook.com/");
+        result.setWebsite("www.facebook.com");
         result.setNameCompany("Laser_design.dp");
         result.setCatchPhrase("Всей роботы не переделать");
         result.setBs("Наружная и внутренняя реклама, декор");
         return result;
     }
 
-    public static String transformToString (User user) { // трансформировать класс в строку GSON
+    public static String transformToString(User user) { // трансформировать класс в строку Json
         return "{\"id\":" + user.getId() + ",\"name\":\"" + user.getName() + "\",\"username\":\"" + user.getUsername() +
                 "\",\"email\":\"" + user.getEmail() + "\",\"street\":\"" + user.getStreet() +
                 "\",\"suite\":\"" + user.getSuite() + "\",\"city\":\"" + user.getCity() + "\",\"zipcode\":" +
                 user.getZipcode() + ",\"lat\":" + user.getLat() + ",\"lng\":" + user.getLng() +
                 ",\"phone\":\"" + user.getPhone() + "\",\"website\":\"" + user.getWebsite() + "\"," +
-                "\"name\":\"" + user.getNameCompany() + "\",\"catchPhrase\":\"" + user.getCatchPhrase() +
+                "\"nameCompany\":\"" + user.getNameCompany() + "\",\"catchPhrase\":\"" + user.getCatchPhrase() +
                 "\",\"bs\":\"" + user.getBs() + "\"}";
+    }
+
+
+    public static User transformToClass(String data) { // трансформировать Json в класс
+        User result = new User();
+        while (data.length() > 1) {
+            String stringFragmentToBeChecked = "";
+            if (data.contains("\n")) {
+                stringFragmentToBeChecked = data.substring(0, data.indexOf('\n')); // взять первую строку
+            } else {
+                stringFragmentToBeChecked = data;
+            }
+            String fragmentFormatting = stringFragmentToBeChecked.strip(); // удалить вначале и конце невидимки
+            fragmentFormatting = fragmentFormatting.replace("{", ""); // удалить все "{"
+            fragmentFormatting = fragmentFormatting.replace("}", ""); // удалить все "}"
+            fragmentFormatting = fragmentFormatting.replace(",", ""); // удалить все ","
+            fragmentFormatting = fragmentFormatting.replace("\"", ""); // удалить все "\""
+            String[] informationParts = fragmentFormatting.split(":"); // разбить на две информационных части
+            if (informationParts.length == 2) { // если в строке два функциональных фрагмента
+                if (informationParts[1].length() > 1) { // если второй функциональный фрагмент не пуст
+                    switch(informationParts[0]) {
+                        case "id":
+                            result.setId(Integer.parseInt(informationParts[1].strip()));
+                            break;
+                        case "name":
+                            if (result.getName() == null) {
+                                result.setName(informationParts[1].strip());
+                            } else {
+                                result.setNameCompany(informationParts[1].strip());
+                            }
+                            break;
+                        case "username":
+                            result.setUsername(informationParts[1].strip());
+                            break;
+                        case "email":
+                            result.setEmail(informationParts[1].strip());
+                            break;
+                        case "street":
+                            result.setStreet(informationParts[1].strip());
+                            break;
+                        case "suite":
+                            result.setSuite(informationParts[1].strip());
+                            break;
+                        case "city":
+                            result.setCity(informationParts[1].strip());
+                            break;
+                        case "zipcode":
+                            result.setZipcode(informationParts[1].strip());
+                            break;
+                        case "lat":
+                            result.setLat(informationParts[1].strip());
+                            break;
+                        case "lng":
+                            result.setLng(informationParts[1].strip());
+                            break;
+                        case "phone":
+                            result.setPhone(informationParts[1].strip());
+                            break;
+                        case "website":
+                            result.setWebsite(informationParts[1].strip());
+                            break;
+                        case "nameCompany":
+                            result.setNameCompany(informationParts[1].strip());
+                            break;
+                        case "catchPhrase":
+                            result.setCatchPhrase(informationParts[1].strip());
+                            break;
+                        case "bs":
+                            result.setBs(informationParts[1].strip());
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            if (data.length() > 3) {
+                data = data.substring(stringFragmentToBeChecked.length()+1);
+            } else {
+                data = data.substring(stringFragmentToBeChecked.length());
+            }
+        }
+        return result;
     }
 }
