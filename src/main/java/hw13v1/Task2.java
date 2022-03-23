@@ -22,7 +22,7 @@ import java.util.ArrayList;
 public class Task2 {
     private static final HttpClient CLIENT = HttpClient.newHttpClient();
 
-    public static void sendGetUsername(String url, int id) throws IOException, InterruptedException { // прочитать список Юзеров
+    public static void sendGetCommentsOnTheUserLastPost(String url, int id) throws IOException, InterruptedException { // прочитать список Юзеров
         URI uri = URI.create(url + "/users/" + id + "/posts"); // формировка ссылки с id пользователя
         HttpRequest request = HttpRequest // HTTP-запрос.
                 .newBuilder() // Построитель дефолтных настроек
@@ -72,6 +72,6 @@ public class Task2 {
 
     public static void main(String[] args) throws IOException, InterruptedException {
         String url = "https://jsonplaceholder.typicode.com"; // к какому сайту будем подключаться
-        sendGetUsername(url, 1); // обратимся к юзеру по id
+        sendGetCommentsOnTheUserLastPost(url, 1); // обратимся к юзеру по id
     }
 }
