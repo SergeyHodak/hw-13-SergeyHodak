@@ -123,7 +123,7 @@ public class User { // Объект Пользователь
         return result;
     }
 
-    public static String transformToString(User user) { // трансформировать класс в строку Json
+    public static String transformToJson(User user) { // трансформировать класс в строку Json
         return "{\"id\":" + user.getId() + ",\"name\":\"" + user.getName() + "\",\"username\":\"" + user.getUsername() +
                 "\",\"email\":\"" + user.getEmail() + "\",\"street\":\"" + user.getStreet() +
                 "\",\"suite\":\"" + user.getSuite() + "\",\"city\":\"" + user.getCity() + "\",\"zipcode\":" +

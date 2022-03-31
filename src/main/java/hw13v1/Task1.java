@@ -40,7 +40,7 @@ public class Task1 {
 
     public static User sendPost(String url, User user) throws IOException, InterruptedException { // добавить нового пользователя
         URI uri = URI.create(url+ "/users"); // трансформировать ссылку
-        String requestBody = User.transformToString(user); // превратить класс в строку Json
+        String requestBody = User.transformToJson(user); // превратить класс в строку Json
         HttpRequest request = HttpRequest // HTTP-запрос.
                 .newBuilder() // Построитель дефолтных настроек
                 .uri(uri) // соединение с сайтом
@@ -121,7 +121,7 @@ public class Task1 {
         return User.transformToClass(response.body());  // вернуть ответ в виде класса Юзер
     }
 
-    public static User sendGetUsername(String url, String username) throws IOException, InterruptedException { // прочитать список Юзеров
+    public static User getUserByUsername(String url, String username) throws IOException, InterruptedException { // прочитать список Юзеров
         URI uri = URI.create(url + "/users?username=" + username); // трансформировать ссылку
         HttpRequest request = HttpRequest // HTTP-запрос.
                 .newBuilder() // Построитель дефолтных настроек
@@ -140,7 +140,7 @@ public class Task1 {
         User user1 = Task1.sendPost(url, User.defaultUser()); // создать нового юзера на сайте
         System.out.println(user1 + "\n"); // посмотреть на ответ сайта (код 201)
 
-        User user2 = Task1.sendPut(url, User.defaultUser()); // создать нового юзера на сайте
+        User user2 = Task1.sendPut(url, User.defaultUser()); // изменить юзера на сайте
         System.out.println(user2 + "\n"); // посмотреть на ответ сайта (код 200)
 
         int user3 = Task1.sendDelete(url, 3); // Удалить Юзера
@@ -152,7 +152,7 @@ public class Task1 {
         User user5 = Task1.sendGetId(url, 2); // взять данные пользователя по ID
         System.out.println(user5 + "\n"); // посмотреть на ответ сайта (код 200)
 
-        User user6 = Task1.sendGetUsername(url, "Samantha"); // взять данные пользователя по username
+        User user6 = Task1.getUserByUsername(url, "Samantha"); // взять данные пользователя по username
         System.out.println(user6); // посмотреть на ответ сайта (код 200)
     }
 }
