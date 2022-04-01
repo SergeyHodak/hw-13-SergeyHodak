@@ -61,31 +61,4 @@ public class User {
         user.setCompany(       company);
         return user;
     }
-
-//    @Override
-//    public String toString() {
-//        return "{\n" +
-//                "    \"id\": " + getId() + ",\n" +
-//                "    \"name\": \"" + getName() + "\",\n" +
-//                "    \"username\": \"" + getUsername() + "\",\n" +
-//                "    \"email\": \"" + getEmail() + "\",\n" +
-//                "    \"address\": {\n" +
-//                "        \"street\": \"" + address.getStreet() + "\",\n" +
-//                "        \"suite\": \"" + address.getSuite() + "\",\n" +
-//                "        \"city\": \"" + address.getCity() + "\",\n" +
-//                "        \"zipcode\": \"" + address.getZipcode() + "\",\n" +
-//                "        \"geo\": {\n" +
-//                "            \"lat\": \"" + address.geo.getLat() + "\",\n" +
-//                "            \"lng\": \"" + address.geo.getLng() + "\"\n" +
-//                "        }\n" +
-//                "    },\n" +
-//                "    \"phone\": \"" + getPhone() + "\",\n" +
-//                "    \"website\": \"" + getWebsite() + "\",\n" +
-//                "    \"company\": {\n" +
-//                "        \"name\": \"" + company.getName() + "\",\n" +
-//                "        \"catchPhrase\": \"" + company.getCatchPhrase() + "\",\n" +
-//                "        \"bs\": \"" + company.getBs() + "\"\n" +
-//                "    }\n" +
-//                "}";
-//    }
 }
